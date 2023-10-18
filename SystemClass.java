@@ -4,7 +4,9 @@ public class SystemClass {
     private DistanceMatrix filteredMatrix;
     public ArrayList<String> path;
     public ArrayList<ArrayList<String>> neighbourhood;
-    public int distance;
+    private int temperature;
+    private int nIter;
+    private int distance;
 
     public SystemClass(ArrayList<String> inputedCities) {
         DistanceMatrix matrix = new DistanceMatrix("matrix.txt");
@@ -12,7 +14,8 @@ public class SystemClass {
         path = new ArrayList<>();
         neighbourhood = new ArrayList<>();
         distance = 0;
-        getStartingPath();
+        System.out.println("Precurso: " + simulatedAnnealing());
+        System.out.println("Distância: " + distance);
     }
 
     public ArrayList<String> getStartingPath() {
@@ -25,22 +28,35 @@ public class SystemClass {
             firstSolution.add(city);
             cities.remove(city);
         }
+
         distance = getDistance(firstSolution);
-        System.out.println(firstSolution);
-        return cities;
+        return firstSolution;
     }
 
-    public void simulatedAnnealing() {
+    public ArrayList<String> simulatedAnnealing() {
         ArrayList<String> current = getStartingPath();
-        ArrayList<String> next = new ArrayList<>();
+        ArrayList<String> next;
         ArrayList<String> best = current;
-        int temperature = 100;
+        temperature = 100;
+        nIter = 3;
 
-        while (temperature>0) {
-
-
-
-            temperature--;
+        while (true) {
+            for (int i = 1;i < nIter; i++) {
+                next = getNeighbour(current);
+                int d = getDistance(next) - getDistance(current);
+                if (d < 0) {
+                    current = next;
+                    if (getDistance(current) < getDistance(best))
+                        best = current;
+                }
+                else
+                    if(Math.random() > 1/temperature)
+                        current = next; //apenas com probabilidade exp (-d / temperature)
+            }
+            if (isOver())
+                return best;
+            varNrIter();
+            decreaseTemp();
         }
     }
 

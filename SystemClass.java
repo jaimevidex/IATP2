@@ -18,8 +18,29 @@ public class SystemClass {
         System.out.println("Distância: " + distance);
     }
 
+    //function decaimento                                                     TODO
+    //function starting temperature                                           TODO
+    //function stop criteria, returns true when the criteria is achieved      TODO
+    //function iteration number varying                                       TODO
+
+    //function starting solution                                              DONE
+    //function neighbour                                                      DONE
+    //alg function
+
+    private void decreaseTemp() {
+        temperature--;
+    }
+
+    private void varNrIter() {
+        nIter++;
+    }
+
+    private boolean isOver() {
+        return temperature == 1;
+    }
+
     public ArrayList<String> getStartingPath() {
-        ArrayList<String> cities = filteredMatrix.getCities();
+        ArrayList<String> cities = new ArrayList<>(filteredMatrix.getCities()) ;
         ArrayList<String> firstSolution = new ArrayList<>();
         int size = cities.size();
         for (int i = 0; i < size; i++) {
@@ -60,7 +81,7 @@ public class SystemClass {
         }
     }
 
-    public int getDistance(ArrayList<String> cities) {
+    private int getDistance(ArrayList<String> cities) {
         int matrixDist = 0;
         for (int i = 0; i< cities.size() - 1; i++) {
             String currentCity = cities.get(i);
@@ -70,4 +91,20 @@ public class SystemClass {
 
         return matrixDist;
     }
+
+
+    private ArrayList<String> getNeighbour(ArrayList<String> solution) {
+        int city1Position = (int)Math.floor(Math.random() * solution.size());
+        int city2Position = (int)Math.floor(Math.random() * solution.size());
+        while (city2Position == city1Position) {
+            city2Position = (int)Math.floor(Math.random() * solution.size());
+        }
+        String city1 = solution.get(city1Position);
+        solution.set(city1Position, solution.get(city2Position));
+        solution.set(city2Position, city1);
+        return solution;
+    }
+
+
+
 }

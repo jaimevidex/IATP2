@@ -26,11 +26,10 @@ public class SystemClass {
         nIter = 1.0;
     }
 
-    //function decaimento                                                     TODO
-    //function starting temperature                                           TODO
-    //function stop criteria, returns true when the criteria is achieved      TODO
-    //function iteration number varying                                       TODO
-
+    //function decaimento                                                     DONE
+    //function starting temperature                                           DONE
+    //function stop criteria, returns true when the criteria is achieved      DONE
+    //function iteration number varying                                       DONE
     //function starting solution                                              DONE
     //function neighbour                                                      DONE
     //alg function
@@ -117,8 +116,12 @@ public class SystemClass {
                 int d = getDistance(next) - getDistance(current);
                 if (d < 0) {
                     current = next;
-                    if (getDistance(current) < getDistance(best))
+                    int currentD = getDistance(current);
+                    if (currentD < distance) {
                         best = current;
+                        distance = currentD;
+
+                    }
                 }
                 else
                     if(Math.random() < Math.exp(-d/temperature)) {

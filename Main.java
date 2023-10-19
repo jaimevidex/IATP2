@@ -5,6 +5,7 @@ public class Main {
     
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+        SystemClass systemClass;
         ArrayList<String> cities = new ArrayList<>();
         String[] line = in.nextLine().trim().split(", ");
         for (int i = 0; i< line.length;i++) {
@@ -16,6 +17,7 @@ public class Main {
             systemClass = new SystemClass(cities);
         systemClass.printResults();
     }
+    
 
 
 }

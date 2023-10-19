@@ -13,15 +13,11 @@ public class SystemClass {
     public SystemClass(ArrayList<String> inputCities) {
         DistanceMatrix matrix = new DistanceMatrix("matrix.txt");
         filteredMatrix = new DistanceMatrix(matrix, inputCities);
-        path = new ArrayList<>();
-        neighbourhood = new ArrayList<>();
         distance = 0;
         nIter = 1.0;
     }
     public SystemClass() {
         filteredMatrix = new DistanceMatrix("matrix.txt");
-        path = new ArrayList<>();
-        neighbourhood = new ArrayList<>();
         distance = 0;
         nIter = 1.0;
     }
@@ -34,21 +30,29 @@ public class SystemClass {
     //function neighbour                                                      DONE
     //alg function
 
+    public static long factorial(int n) {
+        long result = 1;
+        for (int i = 1; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
     private void decreaseTemp() {
-        temperature = alpha*temperature;
+        temperature *= alpha;
     }
 
     private void varNrIter() {
-        nIter= beta*nIter;
+        nIter *= beta;
     }
 
     private boolean isOver() {
-        if(temperature <= 0) {
-            System.out.println("Ending because of temperature");
+        if(temperature <= 0.1) {
+            //System.out.println("Ending because of temperature");
             return true;
         }
-        else if(filteredMatrix.getCities().size() < nIter) {
-            System.out.println("Ending because of end of iterations");
+        else if(factorial(filteredMatrix.getCities().size()-1) < nIter) {
+            //System.out.println("Ending because of end of iterations");
             return true;
         }
         return false;
@@ -89,7 +93,7 @@ public class SystemClass {
     Atroeira, Douro, Pinhal, Teixoso, Ulgueira, Vilar
     */
 
-    public ArrayList<String> getStartingPath() {
+    private ArrayList<String> getStartingPath() {
         ArrayList<String> cities = new ArrayList<>(filteredMatrix.getCities()) ;
         ArrayList<String> firstSolution = new ArrayList<>();
         int size = cities.size();
@@ -104,9 +108,11 @@ public class SystemClass {
         return firstSolution;
     }
 
-    public ArrayList<String> simulatedAnnealing() {
-        ArrayList<String> current = getStartingPath();
-        ArrayList<String> next;
+    private ArrayList<String> simulatedAnnealing() {
+        long startTime = System.nanoTime();
+        first = getStartingPath();
+        ArrayList<String> current = first;
+        ArrayList<String> next = new ArrayList<>();
         ArrayList<String> best = current;
         temperature = getInitialTemperature();
 
@@ -128,8 +134,11 @@ public class SystemClass {
                         current = next;
                     }
             }
-            if (isOver())
+            if (isOver()) {
+                last = next;
+                executeTime = System.nanoTime() - startTime;
                 return best;
+            }
             varNrIter();
             decreaseTemp();
         }
@@ -160,8 +169,14 @@ public class SystemClass {
     }
 
     public void printResults() {
-        System.out.println("Precurso: " + simulatedAnnealing());
-        System.out.println("Distância: " + distance);
-        System.out.println("Temperatura final: " + temperature);
+        System.out.println("Best Path: " + simulatedAnnealing());
+        System.out.println("Distance: " + distance);
+        System.out.println("Final temperature: " + temperature);
+        System.out.println("Number of iterations: " + (int)Math.floor(nIter));
+        System.out.println("Execution time: " + executeTime/1000000.0 + "ms");
+        System.out.println();
+        System.out.println("Worst: " + worst + ", distance: " + getDistance(worst) );
+        System.out.println("First: " + first + ", distance: " + getDistance(first) );
+        System.out.println("Last: " + last + ", distance: " + getDistance(last) );
     }
 }

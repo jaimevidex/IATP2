@@ -17,7 +17,7 @@ public class Main {
             systemClass = new SystemClass(cities);
         systemClass.printResults();
     }
-    
+
 
 
 }

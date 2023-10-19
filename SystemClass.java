@@ -4,18 +4,26 @@ public class SystemClass {
     private DistanceMatrix filteredMatrix;
     public ArrayList<String> path;
     public ArrayList<ArrayList<String>> neighbourhood;
-    private int temperature;
-    private int nIter;
+    private double temperature;
+    private double nIter;
     private int distance;
+    private static final double alpha = 0.8;
+    private static final double beta = 1.1;
 
-    public SystemClass(ArrayList<String> inputedCities) {
+    public SystemClass(ArrayList<String> inputCities) {
         DistanceMatrix matrix = new DistanceMatrix("matrix.txt");
-        filteredMatrix = new DistanceMatrix(matrix, inputedCities);
+        filteredMatrix = new DistanceMatrix(matrix, inputCities);
         path = new ArrayList<>();
         neighbourhood = new ArrayList<>();
         distance = 0;
-        System.out.println("Precurso: " + simulatedAnnealing());
-        System.out.println("Distância: " + distance);
+        nIter = 1.0;
+    }
+    public SystemClass() {
+        filteredMatrix = new DistanceMatrix("matrix.txt");
+        path = new ArrayList<>();
+        neighbourhood = new ArrayList<>();
+        distance = 0;
+        nIter = 1.0;
     }
 
     //function decaimento                                                     TODO
@@ -28,16 +36,59 @@ public class SystemClass {
     //alg function
 
     private void decreaseTemp() {
-        temperature--;
+        temperature = alpha*temperature;
     }
 
     private void varNrIter() {
-        nIter++;
+        nIter= beta*nIter;
     }
 
     private boolean isOver() {
-        return temperature == 1;
+        if(temperature <= 0) {
+            System.out.println("Ending because of temperature");
+            return true;
+        }
+        else if(filteredMatrix.getCities().size() < nIter) {
+            System.out.println("Ending because of end of iterations");
+            return true;
+        }
+        return false;
     }
+
+    private double getInitialTemperature() {
+        ArrayList<ArrayList<Integer>> matrix = filteredMatrix.getDistances();
+
+        int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
+        int max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
+
+        int rows = matrix.size();
+        for (int i = 0; i < rows; i++) {
+            int cols = matrix.get(i).size();
+            for (int j = 0; j < cols; j++) {
+                int current = matrix.get(i).get(j);
+                if (current < min1) {
+                    min2 = min1;
+                    min1 = current;
+                } else if (current < min2) {
+                    min2 = current;
+                }
+
+                if (current > max1) {
+                    max2 = max1;
+                    max1 = current;
+                } else if (current > max2) {
+                    max2 = current;
+                }
+
+            }
+        }
+        int ans = (max1+max2)-(min1+min2);
+        return ans;
+    }
+
+    /*
+    Atroeira, Douro, Pinhal, Teixoso, Ulgueira, Vilar
+    */
 
     public ArrayList<String> getStartingPath() {
         ArrayList<String> cities = new ArrayList<>(filteredMatrix.getCities()) ;
@@ -58,12 +109,11 @@ public class SystemClass {
         ArrayList<String> current = getStartingPath();
         ArrayList<String> next;
         ArrayList<String> best = current;
-        temperature = 100;
-        nIter = 3;
+        temperature = getInitialTemperature();
 
         while (true) {
-            for (int i = 1;i < nIter; i++) {
-                next = getNeighbour(current);
+            for (int i = 1;i <= nIter; i++) {
+                next = getNeighbour(new ArrayList<>(current));
                 int d = getDistance(next) - getDistance(current);
                 if (d < 0) {
                     current = next;
@@ -71,8 +121,9 @@ public class SystemClass {
                         best = current;
                 }
                 else
-                    if(Math.random() > 1/temperature)
-                        current = next; //apenas com probabilidade exp (-d / temperature)
+                    if(Math.random() < Math.exp(-d/temperature)) {
+                        current = next;
+                    }
             }
             if (isOver())
                 return best;
@@ -105,6 +156,9 @@ public class SystemClass {
         return solution;
     }
 
-
-
+    public void printResults() {
+        System.out.println("Precurso: " + simulatedAnnealing());
+        System.out.println("Distância: " + distance);
+        System.out.println("Temperatura final: " + temperature);
+    }
 }

@@ -10,7 +10,11 @@ public class Main {
         for (int i = 0; i< line.length;i++) {
             cities.add(line[i]);
         }
-        SystemClass systemClass = new SystemClass(cities);
+        if (line[0].equals("all"))
+            systemClass = new SystemClass();
+        else
+            systemClass = new SystemClass(cities);
+        systemClass.printResults();
     }
 
 

@@ -2,8 +2,11 @@ import java.util.ArrayList;
 
 public class SystemClass {
     private DistanceMatrix filteredMatrix;
-    public ArrayList<String> path;
-    public ArrayList<ArrayList<String>> neighbourhood;
+    private ArrayList<String> worst;
+    private ArrayList<String> first;
+    private ArrayList<String> last;
+
+    private long executeTime;
     private double temperature;
     private double nIter;
     private int distance;
@@ -62,11 +65,8 @@ public class SystemClass {
         int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
         int max1 = Integer.MIN_VALUE, max2 = Integer.MIN_VALUE;
 
-        int rows = matrix.size();
-        for (int i = 0; i < rows; i++) {
-            int cols = matrix.get(i).size();
-            for (int j = 0; j < cols; j++) {
-                int current = matrix.get(i).get(j);
+        for (ArrayList<Integer> integers : matrix) {
+            for (int current : integers) {
                 if (current < min1) {
                     min2 = min1;
                     min1 = current;
@@ -108,6 +108,8 @@ public class SystemClass {
         ArrayList<String> current = first;
         ArrayList<String> next = new ArrayList<>();
         ArrayList<String> best = current;
+        worst = current;
+
         temperature = getInitialTemperature();
 
         while (true) {
@@ -117,16 +119,21 @@ public class SystemClass {
                 if (d < 0) {
                     current = next;
                     int currentD = getDistance(current);
+                    if (getDistance(worst) < currentD) {
+                        worst = current;
+                    }
                     if (currentD < distance) {
                         best = current;
                         distance = currentD;
-
                     }
                 }
                 else
                     if(Math.random() < Math.exp(-d/temperature)) {
                         current = next;
                     }
+                if (getDistance(worst) < getDistance(next)) {
+                    worst = next;
+                }
             }
             if (isOver()) {
                 last = next;

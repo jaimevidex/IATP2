@@ -48,11 +48,9 @@ public class SystemClass {
 
     private boolean isOver() {
         if(temperature <= 0.1) {
-            //System.out.println("Ending because of temperature");
             return true;
         }
         else if(factorial(filteredMatrix.getCities().size()-1) < nIter) {
-            //System.out.println("Ending because of end of iterations");
             return true;
         }
         return false;
@@ -88,10 +86,6 @@ public class SystemClass {
         int ans = (max1+max2)-(min1+min2);
         return ans;
     }
-
-    /*
-    Atroeira, Douro, Pinhal, Teixoso, Ulgueira, Vilar
-    */
 
     private ArrayList<String> getStartingPath() {
         ArrayList<String> cities = new ArrayList<>(filteredMatrix.getCities()) ;

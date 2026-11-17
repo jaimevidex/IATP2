@@ -1,8 +1,7 @@
-# IATP2 — Simulated Annealing for the Travelling Salesman Problem
+# Simulated Annealing for the Travelling Salesman Problem
 
 A from-scratch implementation of **simulated annealing** applied to the Travelling Salesman Problem, written in plain Java with no dependencies. Given a city distance matrix, it searches for a short round trip and reports how the result compares to the first random tour and the worst tour seen.
 
-Built for the *Inteligência Artificial e Tecnologias* course at Instituto Superior Técnico.
 
 ## How it works
 
